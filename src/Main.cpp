@@ -7,13 +7,43 @@ int main()
     Window window("Minha janela");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    ResourceManager::loadShader("shaders/simple.vs", "shaders/simple.fs", NULL, "simpleShaders");
+
+    float triangle[] = 
+    {
+         0.0f, 0.5f, 0.0f,
+        -0.5f, 0.0f, 0.0f,
+         0.5f, 0.0f, 0.0f
+    };
+
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // left
+         0.5f, -0.5f, 0.0f, // right
+         0.0f,  0.5f, 0.0f  // top
+    };
+
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     while(window.isOpen())
     {
         window.clear();
 
+        ResourceManager::getShader("simpleShader").use();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         window.update();
     };
+
 
     window.cleanAndDestroyWindow();
 
